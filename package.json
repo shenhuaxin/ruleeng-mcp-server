@@ -1,11 +1,11 @@
 {
-  "name": "drawio-mcp-server",
+  "name": "ruleeng-mcp-server",
   "version": "1.5.0",
   "description": "Provides Draw.io services to MCP Clients",
   "type": "module",
   "main": "index.js",
   "bin": {
-    "drawio-mcp-server": "./build/index.js"
+    "ruleeng-mcp-server": "./build/index.js"
   },
   "scripts": {
     "build": "tsc",
