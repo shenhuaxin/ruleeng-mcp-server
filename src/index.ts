@@ -28,7 +28,7 @@ import {
   validLogLevels,
 } from "./mcp_server_logger.js";
 
-import { AssignConfSchema } from './schema.js';
+import { AssignConfSchema, SwitchCase } from "./schema.js";
 /**
  * Display help message and exit
  */
@@ -218,15 +218,31 @@ server.tool(
   default_tool(TOOL_add_node, context),
 );
 
-const TOOL_edit_node_conf = "edit-node-conf";
+const TOOL_edit_params_assign_node_conf = "edit-params-assign-node-conf";
 server.tool(
-  TOOL_edit_node_conf,
-  "编辑节点配置信息",
+  TOOL_edit_params_assign_node_conf,
+  "编辑赋值节点配置信息",
   {
     nodeId: z.string().describe("节点id"),
-    conf: z.array(AssignConfSchema).describe("节点配置信息").default([])
+    // nodeType: z.enum(["start", "end","switch_to", "params_assign"]).describe("节点类型"),
+    conf: z.array(AssignConfSchema).describe("节点配置信息").default([]),
+    // conf: z.discriminatedUnion("nodeType", [
+    //     z.object({ nodeType: z.literal("switch_to"), conf: z.array(SwitchCase) }),
+    //     z.object({ nodeType: z.literal("params_assign"), conf: z.array(AssignConfSchema) }),
+    //   ]).transform(data => data.conf) // 转换后只保留conf字段
   },
-  default_tool(TOOL_edit_node_conf, context),
+  default_tool(TOOL_edit_params_assign_node_conf, context),
+)
+
+const TOOL_edit_switchto_node_conf = "edit-switchto-node-conf";
+server.tool(
+  TOOL_edit_switchto_node_conf,
+  "编辑条件节点配置信息",
+  {
+    nodeId: z.string().describe("节点id"),
+    conf: z.array(SwitchCase).describe("节点配置信息").default([]),
+  },
+  default_tool(TOOL_edit_switchto_node_conf, context),
 )
 
 const TOOL_add_edge = "add-edge";
@@ -272,14 +288,14 @@ server.tool(
   },
   default_tool(TOOL_delete_edge_by_id, context),
 );
-//
-// const TOOL_get_shape_categories = "get-shape-categories";
-// server.tool(
-//   TOOL_get_shape_categories,
-//   "Retrieves available shape categories from the diagram's library. Library is split into multiple categories.",
-//   {},
-//   default_tool(TOOL_get_shape_categories, context),
-// );
+
+const TOOL_get_nodes_categories = "get-nodes-categories";
+server.tool(
+  TOOL_get_nodes_categories,
+  "查询节点列表",
+  {},
+  default_tool(TOOL_get_nodes_categories, context),
+);
 //
 // const TOOL_get_shapes_in_category = "get-shapes-in-category";
 // server.tool(
@@ -475,6 +491,14 @@ server.tool(
   "查询页面上的规则流程图信息",
   {},
   default_tool(TOOL_list_paged_model, context),
+);
+
+const TOOL_get_flow_params = "get-flow-params";
+server.tool(
+  TOOL_get_flow_params,
+  "获取当前规则的参数信息",
+  {},
+  default_tool(TOOL_get_flow_params, context),
 );
 
 async function start_stdio_transport() {
