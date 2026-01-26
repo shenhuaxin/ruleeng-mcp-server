@@ -24,7 +24,7 @@ export const LogicGroup = z.object({
   conjunction: z.enum(["and", "or"]).describe("连词").default("and"),
   sourceValue: z.string().describe("原值"),
   op: z.string().describe("比较符号"),
-  valueType: z.int().describe("1:固定值， 2:变量"),
+  valueType: z.number().int().describe("1:固定值， 2:变量"),
   compareValue: z.string().describe("对比值"),
   get children() {
     return z.array(LogicGroup).optional()
@@ -33,7 +33,8 @@ export const LogicGroup = z.object({
 
 
 export const SwitchCase = z.object({
-  group: z.object(LogicGroup).describe("条件逻辑"),
+  group: LogicGroup.describe("条件逻辑"),
+  edgeId: z.string().describe("连接的边ID"),
   jumpTo: z.string().describe("该条件成立对应的节点ID"),
   remark: z.string().describe("条件描述"),
   isDefault: z.boolean().describe("是否为默认条件")
