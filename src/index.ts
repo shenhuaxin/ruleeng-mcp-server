@@ -28,7 +28,7 @@ import {
   validLogLevels,
 } from "./mcp_server_logger.js";
 
-import { AssignConfSchema, SwitchCase } from "./schema.js";
+import { AssignConfig, CalculateConfig, SwitchConf } from "./schema.js";
 /**
  * Display help message and exit
  */
@@ -188,7 +188,7 @@ const context: Context = {
 const TOOL_get_selected_cell = "get-selected-nodes";
 server.tool(
   TOOL_get_selected_cell,
-  "获取页面上选择的节点和边信息",
+  "获取鼠标选中的节点信息，如果不是用户主动要求，大模型禁止调用该接口",
   {},
   default_tool(TOOL_get_selected_cell, context),
 );
@@ -224,8 +224,8 @@ server.tool(
   "编辑赋值节点配置信息",
   {
     nodeId: z.string().describe("节点id"),
+    config: AssignConfig.describe("赋值节点配置信息"),
     // nodeType: z.enum(["start", "end","switch_to", "params_assign"]).describe("节点类型"),
-    conf: z.array(AssignConfSchema).describe("节点配置信息").default([]),
     // conf: z.discriminatedUnion("nodeType", [
     //     z.object({ nodeType: z.literal("switch_to"), conf: z.array(SwitchCase) }),
     //     z.object({ nodeType: z.literal("params_assign"), conf: z.array(AssignConfSchema) }),
@@ -240,7 +240,18 @@ server.tool(
   "编辑条件节点配置信息",
   {
     nodeId: z.string().describe("节点id"),
-    conf: z.array(SwitchCase).describe("节点配置信息").default([]),
+    config: SwitchConf.describe("条件节点配置信息")
+  },
+  default_tool(TOOL_edit_switchto_node_conf, context),
+)
+
+const TOOL_edit_calculate_node_conf = "edit-calculate-node-conf";
+server.tool(
+  TOOL_edit_calculate_node_conf,
+  "编辑多元计算节点配置信息",
+  {
+    nodeId: z.string().describe("节点id"),
+    config: CalculateConfig.describe("多元节点配置信息")
   },
   default_tool(TOOL_edit_switchto_node_conf, context),
 )

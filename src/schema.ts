@@ -7,8 +7,7 @@ export const AssignValueSchema = z.object({
   // 赋值结果-右值：必填字符串
   sourceValue: z.string().describe("赋值结果-右值"),
   // 赋值结果类型：只能是 1（固定值）或 2（变量）的整数
-  valueType: z.number()
-    .int('valueType 必须是整数') // 确保是整数，对应 Java 的 Integer
+  valueType: z.int() // 确保是整数，对应 Java 的 Integer
     .describe("赋值类型 1: 固定值 2：变量")
     .refine(val => [1, 2].includes(val), {
       message: 'valueType 只能是 1（固定值）或 2（变量）'
@@ -20,25 +19,49 @@ export const AssignConfSchema = z.object({
   group: z.object().required().default({})
 }).describe("配置信息");
 
+export const AssignConfig = z.object({
+  conf: z.array(AssignConfSchema).describe("节点配置信息").default([]),
+})
+
 export const LogicGroup = z.object({
-  conjunction: z.enum(["and", "or"]).describe("连词").default("and"),
-  sourceValue: z.string().describe("原值"),
-  op: z.string().describe("比较符号"),
-  valueType: z.number().int().describe("1:固定值， 2:变量"),
-  compareValue: z.string().describe("对比值"),
+  conjunction: z.enum(["and", "or"]).describe("连词").optional().default("and"),
+  sourceValue: z.string().describe("原值").optional(),
+  op: z.string().describe("比较符号").optional(),
+  valueType: z.number().int().describe("1:固定值， 2:变量").optional(),
+  compareValue: z.string().describe("对比值").optional(),
   get children() {
-    return z.array(LogicGroup).optional()
+    return z.array(LogicGroup).optional().default([])
   }
-});
+})
 
 
 export const SwitchCase = z.object({
   group: LogicGroup.describe("条件逻辑"),
-  edgeId: z.string().describe("连接的边ID"),
+  edgeId: z.string().describe("连接的边的ID"),
   jumpTo: z.string().describe("该条件成立对应的节点ID"),
   remark: z.string().describe("条件描述"),
   isDefault: z.boolean().describe("是否为默认条件")
 });
+
+export const SwitchConf = z.object({
+  conf: z.array(SwitchCase).describe("节点配置信息").default([]),
+})
+
+
+export const CalculateExpression = z.object({
+  target: z.string().describe("目标值"),
+  expression: z.string().describe("表达式")
+})
+
+export const CalculateConfig = z.object({
+  conf: CalculateExpression.describe("计算节点配置信息")
+})
+
+var data = JSON.stringify(AssignConfig.toJSONSchema());
+console.log(data)
+
+
+
 
 // export const SwitchToConfig =
 //   z.object({

@@ -101,6 +101,7 @@ Use the streamable HTTP transport when you need to reach the MCP server over the
 1. Start the server with HTTP enabled (optionally alongside stdio):
 
 ```sh
+npx -y ruleeng-mcp-server --transport http --http-port 3000
 npx -y drawio-mcp-server --transport http --http-port 3000
 # or both: npx -y drawio-mcp-server --transport stdio,http --http-port 4000
 ```
